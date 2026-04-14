@@ -11,7 +11,12 @@ connectDB();
 const server = http.createServer(app);
 
 const io = new Server(server, {
-    cors: { origin: process.env.CLIENT_URL },
+    cors: {
+        origin: [
+            "http://localhost:3000",
+            process.env.CLIENT_URL
+        ],
+    },
 });
 
 socketSetup(io);

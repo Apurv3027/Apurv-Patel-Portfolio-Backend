@@ -35,3 +35,21 @@ exports.visitorsByCountry = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.deviceStats = async (req, res, next) => {
+    try {
+        const data = await service.getDeviceStats();
+        res.json(data);
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.recentVisitors = async (req, res, next) => {
+    try {
+        const data = await service.getRecentVisitors();
+        res.json(data);
+    } catch (err) {
+        next(err);
+    }
+};

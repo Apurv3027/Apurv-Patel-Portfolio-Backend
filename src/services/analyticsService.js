@@ -30,3 +30,31 @@ exports.getVisitorsByCountry = async () => {
         },
     ]);
 };
+
+exports.getDeviceStats = async () => {
+    return await Visitor.aggregate([
+        {
+            $project: {
+                deviceType: {
+                    $cond: [
+                        { $regexMatch: { input: "$device", regex: /mobile/i } },
+                        "Mobile",
+                        "Desktop",
+                    ],
+                },
+            },
+        },
+        {
+            $group: {
+                _id: "$deviceType",
+                count: { $sum: 1 },
+            },
+        },
+    ]);
+};
+
+exports.getRecentVisitors = async () => {
+    return await Visitor.find()
+        .sort({ visitedAt: -1 })
+        .limit(10);
+};
