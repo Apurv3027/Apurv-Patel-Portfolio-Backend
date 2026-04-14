@@ -58,3 +58,44 @@ exports.getRecentVisitors = async () => {
         .sort({ visitedAt: -1 })
         .limit(10);
 };
+
+exports.getVisitors = async ({ page = 1, limit = 10, filter }) => {
+    const query = {};
+
+    // 📅 Filter logic
+    if (filter === "today") {
+        const start = new Date();
+        start.setHours(0, 0, 0, 0);
+
+        query.visitedAt = { $gte: start };
+    }
+
+    if (filter === "7days") {
+        const last7Days = new Date();
+        last7Days.setDate(last7Days.getDate() - 7);
+
+        query.visitedAt = { $gte: last7Days };
+    }
+
+    const visitors = await Visitor.find(query)
+        .sort({ visitedAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit);
+
+    const total = await Visitor.countDocuments(query);
+
+    return {
+        total,
+        page,
+        pages: Math.ceil(total / limit),
+        data: visitors,
+    };
+};
+
+exports.getActiveUsers = async () => {
+    const last5Min = new Date(Date.now() - 5 * 60 * 1000);
+
+    return await Visitor.countDocuments({
+        visitedAt: { $gte: last5Min },
+    });
+};
