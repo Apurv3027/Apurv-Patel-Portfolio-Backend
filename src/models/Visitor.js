@@ -6,12 +6,7 @@ const visitorSchema = new mongoose.Schema({
     country: String,
     countryCode: String,
     device: String,
-    browser: String,
-    os: String,
-    visitedAt: {
-        type: Date,
-        default: Date.now,
-    },
+    visitedAt: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model("Visitor", visitorSchema);

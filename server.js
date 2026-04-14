@@ -1,38 +1,23 @@
-const express = require("express");
+require("dotenv").config();
 const http = require("http");
-const cors = require("cors");
 const { Server } = require("socket.io");
 
-const connectDB = require("./config/db");
-const analyticsRoutes = require("./routes/analytics");
-const setupSocket = require("./socket/socket");
+const connectDB = require("./src/config/db");
+const app = require("./src/app");
+const socketSetup = require("./src/sockets/socket");
 
-const app = express();
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-// DB Connection
 connectDB();
 
-// Routes
-app.use("/api/analytics", analyticsRoutes);
-
-// Create server
 const server = http.createServer(app);
 
-// Socket Setup
 const io = new Server(server, {
-    cors: {
-        origin: "*",
-    },
+    cors: { origin: process.env.CLIENT_URL },
 });
 
-setupSocket(io);
+socketSetup(io);
 
-// Start Server
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
+
 server.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
