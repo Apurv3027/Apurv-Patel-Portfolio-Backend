@@ -37,12 +37,34 @@ exports.parseUserAgent = (userAgent = "") => {
     };
 };
 
-exports.getClientIp = (req) => {
-    const forwarded = req.headers["x-forwarded-for"];
+const normalizeIp = (ip) => {
+    if (!ip) return null;
 
-    if (typeof forwarded === "string" && forwarded.length > 0) {
-        return forwarded.split(",")[0].trim();
+    const value = String(ip).trim();
+
+    if (value.startsWith("::ffff:")) {
+        return value.slice(7);
     }
 
-    return req.ip || req.socket?.remoteAddress || null;
+    return value;
+};
+
+exports.getClientIp = (req) => {
+    const cfConnectingIp = req.headers["cf-connecting-ip"];
+    const realIp = req.headers["x-real-ip"];
+    const forwarded = req.headers["x-forwarded-for"];
+
+    if (cfConnectingIp) {
+        return normalizeIp(cfConnectingIp);
+    }
+
+    if (realIp) {
+        return normalizeIp(realIp);
+    }
+
+    if (typeof forwarded === "string" && forwarded.length > 0) {
+        return normalizeIp(forwarded.split(",")[0]);
+    }
+
+    return normalizeIp(req.ip || req.socket?.remoteAddress);
 };
