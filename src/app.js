@@ -3,6 +3,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 
+const env = require("./config/env");
 const analyticsRoutes = require("./routes/analyticsRoutes");
 const errorHandler = require("./middlewares/errorHandler");
 
@@ -10,10 +11,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: [
-            "http://localhost:3000",
-            process.env.CLIENT_URL
-        ],
+        origin: env.corsOrigins,
         methods: ["GET", "POST"],
         credentials: true,
     })

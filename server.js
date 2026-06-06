@@ -2,6 +2,7 @@ require("dotenv").config();
 const http = require("http");
 const { Server } = require("socket.io");
 
+const env = require("./src/config/env");
 const connectDB = require("./src/config/db");
 const app = require("./src/app");
 const socketSetup = require("./src/sockets/socket");
@@ -13,18 +14,13 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: [
-            "http://localhost:3000",
-            process.env.CLIENT_URL
-        ],
+        origin: env.corsOrigins,
     },
 });
 
 setIO(io);
 socketSetup(io);
 
-const PORT = process.env.PORT || 5000;
-
-server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+server.listen(env.port, () => {
+    console.log(`Server running on port ${env.port}`);
 });
