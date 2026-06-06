@@ -1,0 +1,225 @@
+{
+  "info": {
+    "name": "Apurv Patel Portfolio Backend",
+    "description": "All analytics endpoints for apurv-patel-portfolio-backend.\n\nBase URL: {{LOCAL_URL}}\n\nSocket.IO (real-time, not REST):\n- Connect to {{LOCAL_URL}}\n- Listen: visitorUpdate, realtimeData\n- Emit: requestRealtimeData",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "https://apurv-patel-portfolio-backend.onrender.com"
+    },
+    {
+      "key": "LOCAL_URL",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "sessionId",
+      "value": "postman-session-001"
+    }
+  ],
+  "item": [
+    {
+      "name": "Track Visitor",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "User-Agent",
+            "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "description": "Used server-side to detect platform, browser, OS, and device"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sessionId\": \"{{sessionId}}\",\n  \"page\": \"/\",\n  \"city\": \"Mumbai\",\n  \"country\": \"India\",\n  \"countryCode\": \"IN\"\n}"
+        },
+        "url": "{{LOCAL_URL}}/api/analytics/track",
+        "description": "Track a website visitor. Platform/browser/OS are parsed from User-Agent header.\n\nRequired: sessionId\nOptional: page, city, country, countryCode"
+      }
+    },
+    {
+      "name": "Track Visitor (iOS Mobile)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "User-Agent",
+            "value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sessionId\": \"ios-session-001\",\n  \"page\": \"/about\",\n  \"city\": \"Delhi\",\n  \"country\": \"India\",\n  \"countryCode\": \"IN\"\n}"
+        },
+        "url": "{{LOCAL_URL}}/api/analytics/track",
+        "description": "Example track request simulating an iOS mobile visitor."
+      }
+    },
+    {
+      "name": "Get Total Visitors",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{LOCAL_URL}}/api/analytics/total",
+        "description": "Returns total visitor count across all time."
+      }
+    },
+    {
+      "name": "Get Visitors By Date",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{LOCAL_URL}}/api/analytics/by-date",
+        "description": "Returns visitor counts grouped by date (YYYY-MM-DD)."
+      }
+    },
+    {
+      "name": "Get Visitors By Country",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{LOCAL_URL}}/api/analytics/by-country",
+        "description": "Returns visitor counts grouped by country code."
+      }
+    },
+    {
+      "name": "Get Device Stats",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{LOCAL_URL}}/api/analytics/device-stats",
+        "description": "Returns visitor counts grouped by device type (mobile, tablet, desktop)."
+      }
+    },
+    {
+      "name": "Get Platform Stats",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{LOCAL_URL}}/api/analytics/platform-stats",
+        "description": "Returns visitor counts grouped by platform (iOS, Android, Windows, macOS, etc.)."
+      }
+    },
+    {
+      "name": "Get Recent Visitors",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{LOCAL_URL}}/api/analytics/recent",
+        "description": "Returns the 10 most recent visitors."
+      }
+    },
+    {
+      "name": "Get Visitors (Paginated)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{LOCAL_URL}}/api/analytics/visitors?page=1&limit=10",
+          "host": ["{{LOCAL_URL}}"],
+          "path": ["api", "analytics", "visitors"],
+          "query": [
+            {
+              "key": "page",
+              "value": "1",
+              "description": "Page number (default: 1)"
+            },
+            {
+              "key": "limit",
+              "value": "10",
+              "description": "Items per page (default: 10)"
+            },
+            {
+              "key": "filter",
+              "value": "",
+              "description": "Optional: today | 7days",
+              "disabled": true
+            }
+          ]
+        },
+        "description": "Paginated visitor list. Optional filter: today or 7days."
+      }
+    },
+    {
+      "name": "Get Visitors (Today)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{LOCAL_URL}}/api/analytics/visitors?page=1&limit=10&filter=today",
+          "host": ["{{LOCAL_URL}}"],
+          "path": ["api", "analytics", "visitors"],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "10"
+            },
+            {
+              "key": "filter",
+              "value": "today"
+            }
+          ]
+        },
+        "description": "Visitors from today only."
+      }
+    },
+    {
+      "name": "Get Visitors (Last 7 Days)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{LOCAL_URL}}/api/analytics/visitors?page=1&limit=10&filter=7days",
+          "host": ["{{LOCAL_URL}}"],
+          "path": ["api", "analytics", "visitors"],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "10"
+            },
+            {
+              "key": "filter",
+              "value": "7days"
+            }
+          ]
+        },
+        "description": "Visitors from the last 7 days."
+      }
+    },
+    {
+      "name": "Get Active Users",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{LOCAL_URL}}/api/analytics/active-users",
+        "description": "Returns active visitors in the last 5 minutes with platform, page, location, etc."
+      }
+    },
+    {
+      "name": "Get Realtime Data",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{LOCAL_URL}}/api/analytics/realtime",
+        "description": "Full real-time dashboard: active visitors, recent visitors, platform stats, total count."
+      }
+    }
+  ]
+}
