@@ -5,6 +5,7 @@ const { Server } = require("socket.io");
 const connectDB = require("./src/config/db");
 const app = require("./src/app");
 const socketSetup = require("./src/sockets/socket");
+const { setIO } = require("./src/sockets/io");
 
 connectDB();
 
@@ -19,6 +20,7 @@ const io = new Server(server, {
     },
 });
 
+setIO(io);
 socketSetup(io);
 
 const PORT = process.env.PORT || 5000;

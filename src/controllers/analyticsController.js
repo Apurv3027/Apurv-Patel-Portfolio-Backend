@@ -1,26 +1,68 @@
 const service = require("../services/analyticsService");
-const UAParser = require("ua-parser-js");
+const { parseUserAgent, getClientIp } = require("../utils/parseUserAgent");
+const { getIO } = require("../sockets/io");
+
+const emitRealtimeUpdate = (payload) => {
+    const io = getIO();
+
+    if (!io) return;
+
+    io.emit("visitorUpdate", payload);
+};
 
 exports.track = async (req, res) => {
     try {
-        const { sessionId, page } = req.body;
+        const { sessionId, page, city, country, countryCode } = req.body;
 
-        const lastVisit = await Visitor.findOne({
-            sessionId,
-            page,
-            visitedAt: {
-                $gte: new Date(Date.now() - 5 * 60 * 1000), // 5 min window
-            },
-        });
-
-        // ❌ Duplicate → skip
-        if (lastVisit) {
-            return res.json({ success: true, duplicate: true });
+        if (!sessionId) {
+            return res.status(400).json({ error: "sessionId is required" });
         }
 
-        await Visitor.create(req.body);
+        const userAgent = req.headers["user-agent"] || "";
+        const parsed = parseUserAgent(userAgent);
 
-        res.json({ success: true });
+        const visitorData = {
+            sessionId,
+            page: page || "/",
+            city: city || null,
+            country: country || null,
+            countryCode: countryCode || null,
+            ip: getClientIp(req),
+            browser: parsed.browser,
+            os: parsed.os,
+            device: parsed.device,
+            deviceType: parsed.deviceType,
+            platform: parsed.platform,
+        };
+
+        const result = await service.trackVisitor(visitorData);
+
+        const realtimePayload = {
+            activeCount: result.activeVisitors.length,
+            activeVisitors: result.activeVisitors,
+            latestVisitor: {
+                sessionId: result.visitor.sessionId,
+                page: result.visitor.page,
+                platform: result.visitor.platform,
+                deviceType: result.visitor.deviceType,
+                browser: result.visitor.browser,
+                os: result.visitor.os,
+                country: result.visitor.country,
+                city: result.visitor.city,
+                lastSeenAt: result.visitor.lastSeenAt,
+                duplicate: result.duplicate,
+            },
+            updatedAt: new Date(),
+        };
+
+        emitRealtimeUpdate(realtimePayload);
+
+        res.json({
+            success: true,
+            duplicate: result.duplicate,
+            platform: result.visitor.platform,
+            realtime: realtimePayload,
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -62,6 +104,15 @@ exports.deviceStats = async (req, res, next) => {
     }
 };
 
+exports.platformStats = async (req, res, next) => {
+    try {
+        const data = await service.getPlatformStats();
+        res.json(data);
+    } catch (err) {
+        next(err);
+    }
+};
+
 exports.recentVisitors = async (req, res, next) => {
     try {
         const data = await service.getRecentVisitors();
@@ -90,6 +141,15 @@ exports.getVisitors = async (req, res, next) => {
 exports.getActiveUsers = async (req, res, next) => {
     try {
         const data = await service.getActiveUsers();
+        res.json(data);
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.getRealtimeData = async (req, res, next) => {
+    try {
+        const data = await service.getRealtimeData();
         res.json(data);
     } catch (err) {
         next(err);
