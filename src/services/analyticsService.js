@@ -15,11 +15,17 @@ exports.trackVisitor = async (data) => {
 
     if (lastVisit) {
         lastVisit.lastSeenAt = now;
+
+        if (data.ip) {
+            lastVisit.ip = data.ip;
+        }
+
         await lastVisit.save();
 
         const visitorPayload = {
             sessionId: lastVisit.sessionId,
             page: lastVisit.page,
+            ip: lastVisit.ip,
             platform: lastVisit.platform,
             deviceType: lastVisit.deviceType,
             browser: lastVisit.browser,
@@ -45,6 +51,7 @@ exports.trackVisitor = async (data) => {
     activeVisitorStore.upsert({
         sessionId: visitor.sessionId,
         page: visitor.page,
+        ip: visitor.ip,
         platform: visitor.platform,
         deviceType: visitor.deviceType,
         browser: visitor.browser,
@@ -169,6 +176,7 @@ exports.getActiveUsers = async () => {
                 browser: { $first: "$browser" },
                 os: { $first: "$os" },
                 device: { $first: "$device" },
+                ip: { $first: "$ip" },
                 country: { $first: "$country" },
                 countryCode: { $first: "$countryCode" },
                 city: { $first: "$city" },
@@ -185,11 +193,14 @@ exports.getActiveUsers = async () => {
 };
 
 exports.getRealtimeData = async () => {
-    const [activeUsers, recentVisitors, platformStats, total] = await Promise.all([
+    const [activeUsers, recentVisitors, platformStats, total, byDate, byCountry, deviceStats] = await Promise.all([
         exports.getActiveUsers(),
         exports.getRecentVisitors(),
         exports.getPlatformStats(),
         exports.getTotalVisitors(),
+        exports.getVisitorsByDate(),
+        exports.getVisitorsByCountry(),
+        exports.getDeviceStats(),
     ]);
 
     return {
@@ -198,6 +209,9 @@ exports.getRealtimeData = async () => {
         activeVisitors: activeUsers.visitors,
         recentVisitors,
         platformStats,
+        byDate,
+        byCountry,
+        deviceStats,
         updatedAt: new Date(),
     };
 };

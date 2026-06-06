@@ -43,6 +43,7 @@ exports.track = async (req, res) => {
             latestVisitor: {
                 sessionId: result.visitor.sessionId,
                 page: result.visitor.page,
+                ip: result.visitor.ip,
                 platform: result.visitor.platform,
                 deviceType: result.visitor.deviceType,
                 browser: result.visitor.browser,
@@ -60,6 +61,7 @@ exports.track = async (req, res) => {
         res.json({
             success: true,
             duplicate: result.duplicate,
+            ip: result.visitor.ip,
             platform: result.visitor.platform,
             realtime: realtimePayload,
         });

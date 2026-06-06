@@ -18,6 +18,7 @@ exports.upsert = (visitor) => {
     activeVisitors.set(visitor.sessionId, {
         sessionId: visitor.sessionId,
         page: visitor.page,
+        ip: visitor.ip,
         platform: visitor.platform,
         deviceType: visitor.deviceType,
         browser: visitor.browser,
