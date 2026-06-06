@@ -13,9 +13,12 @@ Node.js backend for portfolio website analytics. Tracks visitors, detects platfo
 
 ```
 ├── server.js                 # App entry point
+├── .env.example              # Environment variables template
 ├── src/
 │   ├── app.js                # Express app setup
-│   ├── config/db.js          # MongoDB connection
+│   ├── config/
+│   │   ├── db.js             # MongoDB connection
+│   │   └── env.js            # Environment config
 │   ├── controllers/          # Route handlers
 │   ├── models/               # Mongoose models
 │   ├── routes/               # API routes
@@ -43,19 +46,30 @@ npm install
 
 ### Environment Variables
 
-Create a `.env` file in the project root:
+Copy the example file and fill in your values:
 
-```env
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/portfolio
-CLIENT_URL=http://localhost:3000
+```bash
+cp .env.example .env
 ```
 
-| Variable     | Description                          |
-| ------------ | ------------------------------------ |
-| `PORT`       | Server port (default: `5000`)        |
-| `MONGO_URI`  | MongoDB connection string            |
-| `CLIENT_URL` | Frontend URL for CORS & Socket.IO    |
+```env
+NODE_ENV=development
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/portfolio_analytics
+CLIENT_URL=https://your-frontend-domain.vercel.app
+LOCAL_CLIENT_URL=http://localhost:3000
+```
+
+| Variable           | Required | Description                                              |
+| ------------------ | -------- | -------------------------------------------------------- |
+| `NODE_ENV`         | No       | Environment mode (`development` / `production`)          |
+| `PORT`             | No       | Server port (default: `5000`)                            |
+| `MONGO_URI`        | Yes      | MongoDB connection string (keep secret, never commit)    |
+| `CLIENT_URL`       | Yes      | Production frontend URL for CORS & Socket.IO             |
+| `LOCAL_CLIENT_URL` | No       | Local frontend URL for development (default: `localhost:3000`) |
+| `CORS_ORIGINS`     | No       | Optional comma-separated CORS origins (overrides above)  |
+
+> **Note:** `.env` is gitignored. Use `.env.example` as a template only — do not put real credentials in it.
 
 ### Run the Server
 
