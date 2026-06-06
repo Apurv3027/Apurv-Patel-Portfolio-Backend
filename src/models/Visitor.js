@@ -6,6 +6,10 @@ const visitorSchema = new mongoose.Schema({
     country: String,
     countryCode: String,
     device: String,
+    browser: String,
+    os: String,
+    page: String,
+    sessionId: String,
     visitedAt: { type: Date, default: Date.now },
 });
 

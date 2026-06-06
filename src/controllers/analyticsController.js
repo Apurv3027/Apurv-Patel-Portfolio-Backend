@@ -1,26 +1,28 @@
 const service = require("../services/analyticsService");
 const UAParser = require("ua-parser-js");
 
-exports.track = async (req, res, next) => {
+exports.track = async (req, res) => {
     try {
-        const parser = new UAParser(req.body.device);
-        const ua = parser.getResult();
+        const { sessionId, page } = req.body;
 
-        const visitorData = {
-            ip: req.body.ip,
-            city: req.body.city,
-            country: req.body.country,
-            countryCode: req.body.countryCode,
-            device: ua.device.type || "desktop",
-            browser: ua.browser.name,
-            os: ua.os.name,
-        };
+        const lastVisit = await Visitor.findOne({
+            sessionId,
+            page,
+            visitedAt: {
+                $gte: new Date(Date.now() - 5 * 60 * 1000), // 5 min window
+            },
+        });
 
-        await service.trackVisitor(visitorData);
+        // ❌ Duplicate → skip
+        if (lastVisit) {
+            return res.json({ success: true, duplicate: true });
+        }
+
+        await Visitor.create(req.body);
 
         res.json({ success: true });
     } catch (err) {
-        next(err);
+        res.status(500).json({ error: err.message });
     }
 };
 
