@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Apurv Patel Portfolio Backend",
-    "description": "All analytics endpoints for apurv-patel-portfolio-backend.\n\nBase URL: {{LOCAL_URL}}\n\nSocket.IO (real-time, not REST):\n- Connect to {{LOCAL_URL}}\n- Listen: visitorUpdate, realtimeData\n- Emit: requestRealtimeData",
+    "description": "All analytics and admin endpoints for apurv-patel-portfolio-backend.\n\nBase URL: {{LOCAL_URL}}\n\nAuthentication:\n- Run the **Admin Login** request with valid credentials first.\n- The request contains a test script that automatically extracts the JWT token and saves it to the `admin_token` collection variable.\n- All protected endpoints automatically inherit and use this token.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -16,12 +16,65 @@
     {
       "key": "sessionId",
       "value": "postman-session-001"
+    },
+    {
+      "key": "admin_token",
+      "value": "paste_jwt_here_or_run_login_request"
     }
   ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{admin_token}}",
+        "type": "string"
+      }
+    ]
+  },
   "item": [
+    {
+      "name": "Admin Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const response = pm.response.json();",
+              "if (response && response.token) {",
+              "    pm.collectionVariables.set(\"admin_token\", response.token);",
+              "    console.log(\"Token automatically saved to collection variable 'admin_token':\", response.token);",
+              "}"
+            ],
+            "type": "javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@apurv.com\",\n  \"password\": \"123456\"\n}"
+        },
+        "url": "{{LOCAL_URL}}/api/admin/login",
+        "description": "Authenticate admin credentials against DB. Returns signed JWT token. The post-request test script saves the token automatically into the collection variables."
+      }
+    },
     {
       "name": "Track Visitor",
       "request": {
+        "auth": {
+          "type": "noauth"
+        },
         "method": "POST",
         "header": [
           {
@@ -39,12 +92,15 @@
           "raw": "{\n  \"sessionId\": \"{{sessionId}}\",\n  \"page\": \"/\",\n  \"city\": \"Mumbai\",\n  \"country\": \"India\",\n  \"countryCode\": \"IN\"\n}"
         },
         "url": "{{LOCAL_URL}}/api/analytics/track",
-        "description": "Track a website visitor. Platform/browser/OS are parsed from User-Agent header.\n\nRequired: sessionId\nOptional: page, city, country, countryCode"
+        "description": "Track website visitor. User-Agent header is parsed to extract device/os details."
       }
     },
     {
       "name": "Track Visitor (iOS Mobile)",
       "request": {
+        "auth": {
+          "type": "noauth"
+        },
         "method": "POST",
         "header": [
           {
@@ -62,6 +118,15 @@
         },
         "url": "{{LOCAL_URL}}/api/analytics/track",
         "description": "Example track request simulating an iOS mobile visitor."
+      }
+    },
+    {
+      "name": "Get Realtime Data",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{LOCAL_URL}}/api/analytics/realtime",
+        "description": "Full real-time dashboard data: active visitors, recent visitors, platform stats, total count."
       }
     },
     {
@@ -210,15 +275,6 @@
         "header": [],
         "url": "{{LOCAL_URL}}/api/analytics/active-users",
         "description": "Returns active visitors in the last 5 minutes with platform, page, location, etc."
-      }
-    },
-    {
-      "name": "Get Realtime Data",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": "{{LOCAL_URL}}/api/analytics/realtime",
-        "description": "Full real-time dashboard: active visitors, recent visitors, platform stats, total count."
       }
     }
   ]

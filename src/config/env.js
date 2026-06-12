@@ -15,4 +15,8 @@ module.exports = {
     clientUrl: process.env.CLIENT_URL,
     localClientUrl: process.env.LOCAL_CLIENT_URL || "http://localhost:3000",
     corsOrigins: getCorsOrigins(),
+    jwtSecret: process.env.JWT_SECRET || "fallback_portfolio_jwt_secret_12345",
+    adminEmail: process.env.ADMIN_EMAIL || "admin@apurv.com",
+    adminPassword: process.env.ADMIN_PASSWORD || "123456",
 };
+
