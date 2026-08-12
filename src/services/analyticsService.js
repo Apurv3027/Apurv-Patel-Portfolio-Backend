@@ -116,6 +116,18 @@ exports.getPlatformStats = async () => {
     ]);
 };
 
+exports.getBrowserStats = async () => {
+    return await Visitor.aggregate([
+        {
+            $group: {
+                _id: { $ifNull: ["$browser", "Unknown"] },
+                count: { $sum: 1 },
+            },
+        },
+        { $sort: { count: -1 } },
+    ]);
+};
+
 exports.getRecentVisitors = async () => {
     return await Visitor.find()
         .sort({ visitedAt: -1 })
@@ -193,7 +205,7 @@ exports.getActiveUsers = async () => {
 };
 
 exports.getRealtimeData = async () => {
-    const [activeUsers, recentVisitors, platformStats, total, byDate, byCountry, deviceStats] = await Promise.all([
+    const [activeUsers, recentVisitors, platformStats, total, byDate, byCountry, deviceStats, browserStats] = await Promise.all([
         exports.getActiveUsers(),
         exports.getRecentVisitors(),
         exports.getPlatformStats(),
@@ -201,6 +213,7 @@ exports.getRealtimeData = async () => {
         exports.getVisitorsByDate(),
         exports.getVisitorsByCountry(),
         exports.getDeviceStats(),
+        exports.getBrowserStats(),
     ]);
 
     return {
@@ -212,6 +225,7 @@ exports.getRealtimeData = async () => {
         byDate,
         byCountry,
         deviceStats,
+        browserStats,
         updatedAt: new Date(),
     };
 };

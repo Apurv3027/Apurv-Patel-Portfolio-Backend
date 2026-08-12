@@ -115,6 +115,15 @@ exports.platformStats = async (req, res, next) => {
     }
 };
 
+exports.browserStats = async (req, res, next) => {
+    try {
+        const data = await service.getBrowserStats();
+        res.json(data);
+    } catch (err) {
+        next(err);
+    }
+};
+
 exports.recentVisitors = async (req, res, next) => {
     try {
         const data = await service.getRecentVisitors();

@@ -13,6 +13,7 @@ router.get("/by-date", controller.visitorsByDate);
 router.get("/by-country", controller.visitorsByCountry);
 router.get("/device-stats", controller.deviceStats);
 router.get("/platform-stats", controller.platformStats);
+router.get("/browser-stats", controller.browserStats);
 router.get("/recent", controller.recentVisitors);
 router.get("/visitors", controller.getVisitors);
 router.get("/active-users", controller.getActiveUsers);
