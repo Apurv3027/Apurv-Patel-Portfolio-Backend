@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const env = require("./config/env");
 const adminRoutes = require("./routes/adminRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
+const contactRoutes = require("./routes/contactRoutes");
 const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();
@@ -40,6 +41,7 @@ app.use(express.json());
 
 app.use("/api/admin", adminRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/contact", contactRoutes);
 
 
 app.use(errorHandler);

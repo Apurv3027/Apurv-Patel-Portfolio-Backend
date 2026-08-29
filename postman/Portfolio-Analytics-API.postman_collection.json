@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Apurv Patel Portfolio Backend",
-    "description": "All analytics and admin endpoints for apurv-patel-portfolio-backend.\n\nBase URL: {{LOCAL_URL}}\n\nAuthentication:\n- Run the **Admin Login** request with valid credentials first.\n- The request contains a test script that automatically extracts the JWT token and saves it to the `admin_token` collection variable.\n- All protected endpoints automatically inherit and use this token.",
+    "description": "All analytics, admin, and contact endpoints for apurv-patel-portfolio-backend.\n\nBase URL: {{LOCAL_URL}}\n\nAuthentication:\n- Run the **Admin Login** request with valid credentials first.\n- The request contains a test script that automatically extracts the JWT token and saves it to the `admin_token` collection variable.\n- All protected endpoints automatically inherit and use this token.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -20,6 +20,10 @@
     {
       "key": "admin_token",
       "value": "paste_jwt_here_or_run_login_request"
+    },
+    {
+      "key": "contact_id",
+      "value": "paste_contact_id_here"
     }
   ],
   "auth": {
@@ -70,212 +74,442 @@
       }
     },
     {
-      "name": "Track Visitor",
-      "request": {
-        "auth": {
-          "type": "noauth"
-        },
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          },
-          {
-            "key": "User-Agent",
-            "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            "description": "Used server-side to detect platform, browser, OS, and device"
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Track Visitor",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "description": "Used server-side to detect platform, browser, OS, and device"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"{{sessionId}}\",\n  \"page\": \"/\",\n  \"city\": \"Mumbai\",\n  \"country\": \"India\",\n  \"countryCode\": \"IN\"\n}"
+            },
+            "url": "{{LOCAL_URL}}/api/analytics/track",
+            "description": "Track website visitor. User-Agent header is parsed to extract device/os details."
           }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"sessionId\": \"{{sessionId}}\",\n  \"page\": \"/\",\n  \"city\": \"Mumbai\",\n  \"country\": \"India\",\n  \"countryCode\": \"IN\"\n}"
         },
-        "url": "{{LOCAL_URL}}/api/analytics/track",
-        "description": "Track website visitor. User-Agent header is parsed to extract device/os details."
-      }
-    },
-    {
-      "name": "Track Visitor (iOS Mobile)",
-      "request": {
-        "auth": {
-          "type": "noauth"
-        },
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          },
-          {
-            "key": "User-Agent",
-            "value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+        {
+          "name": "Track Visitor (iOS Mobile)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"ios-session-001\",\n  \"page\": \"/about\",\n  \"city\": \"Delhi\",\n  \"country\": \"India\",\n  \"countryCode\": \"IN\"\n}"
+            },
+            "url": "{{LOCAL_URL}}/api/analytics/track",
+            "description": "Example track request simulating an iOS mobile visitor."
           }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"sessionId\": \"ios-session-001\",\n  \"page\": \"/about\",\n  \"city\": \"Delhi\",\n  \"country\": \"India\",\n  \"countryCode\": \"IN\"\n}"
         },
-        "url": "{{LOCAL_URL}}/api/analytics/track",
-        "description": "Example track request simulating an iOS mobile visitor."
-      }
-    },
-    {
-      "name": "Get Realtime Data",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": "{{LOCAL_URL}}/api/analytics/realtime",
-        "description": "Full real-time dashboard data: active visitors, recent visitors, platform stats, total count."
-      }
-    },
-    {
-      "name": "Get Total Visitors",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": "{{LOCAL_URL}}/api/analytics/total",
-        "description": "Returns total visitor count across all time."
-      }
-    },
-    {
-      "name": "Get Visitors By Date",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": "{{LOCAL_URL}}/api/analytics/by-date",
-        "description": "Returns visitor counts grouped by date (YYYY-MM-DD)."
-      }
-    },
-    {
-      "name": "Get Visitors By Country",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": "{{LOCAL_URL}}/api/analytics/by-country",
-        "description": "Returns visitor counts grouped by country code."
-      }
-    },
-    {
-      "name": "Get Device Stats",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": "{{LOCAL_URL}}/api/analytics/device-stats",
-        "description": "Returns visitor counts grouped by device type (mobile, tablet, desktop)."
-      }
-    },
-    {
-      "name": "Get Platform Stats",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": "{{LOCAL_URL}}/api/analytics/platform-stats",
-        "description": "Returns visitor counts grouped by platform (iOS, Android, Windows, macOS, etc.)."
-      }
-    },
-    {
-      "name": "Get Recent Visitors",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": "{{LOCAL_URL}}/api/analytics/recent",
-        "description": "Returns the 10 most recent visitors."
-      }
-    },
-    {
-      "name": "Get Visitors (Paginated)",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{LOCAL_URL}}/api/analytics/visitors?page=1&limit=10",
-          "host": ["{{LOCAL_URL}}"],
-          "path": ["api", "analytics", "visitors"],
-          "query": [
-            {
-              "key": "page",
-              "value": "1",
-              "description": "Page number (default: 1)"
+        {
+          "name": "Get Realtime Data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{LOCAL_URL}}/api/analytics/realtime",
+            "description": "Full real-time dashboard data: active visitors, recent visitors, platform stats, total count."
+          }
+        },
+        {
+          "name": "Get Total Visitors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{LOCAL_URL}}/api/analytics/total",
+            "description": "Returns total visitor count across all time."
+          }
+        },
+        {
+          "name": "Get Visitors By Date",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{LOCAL_URL}}/api/analytics/by-date",
+            "description": "Returns visitor counts grouped by date (YYYY-MM-DD)."
+          }
+        },
+        {
+          "name": "Get Visitors By Country",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{LOCAL_URL}}/api/analytics/by-country",
+            "description": "Returns visitor counts grouped by country code."
+          }
+        },
+        {
+          "name": "Get Device Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{LOCAL_URL}}/api/analytics/device-stats",
+            "description": "Returns visitor counts grouped by device type (mobile, tablet, desktop)."
+          }
+        },
+        {
+          "name": "Get Platform Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{LOCAL_URL}}/api/analytics/platform-stats",
+            "description": "Returns visitor counts grouped by platform (iOS, Android, Windows, macOS, etc.)."
+          }
+        },
+        {
+          "name": "Get Browser Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{LOCAL_URL}}/api/analytics/browser-stats",
+            "description": "Returns visitor counts grouped by browser."
+          }
+        },
+        {
+          "name": "Get Recent Visitors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{LOCAL_URL}}/api/analytics/recent",
+            "description": "Returns the 10 most recent visitors."
+          }
+        },
+        {
+          "name": "Get Visitors (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LOCAL_URL}}/api/analytics/visitors?page=1&limit=10",
+              "host": ["{{LOCAL_URL}}"],
+              "path": ["api", "analytics", "visitors"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page (default: 10)"
+                },
+                {
+                  "key": "filter",
+                  "value": "",
+                  "description": "Optional: today | 7days",
+                  "disabled": true
+                }
+              ]
             },
-            {
-              "key": "limit",
-              "value": "10",
-              "description": "Items per page (default: 10)"
+            "description": "Paginated visitor list. Optional filter: today or 7days."
+          }
+        },
+        {
+          "name": "Get Visitors (Today)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LOCAL_URL}}/api/analytics/visitors?page=1&limit=10&filter=today",
+              "host": ["{{LOCAL_URL}}"],
+              "path": ["api", "analytics", "visitors"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "filter", "value": "today" }
+              ]
             },
+            "description": "Visitors from today only."
+          }
+        },
+        {
+          "name": "Get Visitors (Last 7 Days)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LOCAL_URL}}/api/analytics/visitors?page=1&limit=10&filter=7days",
+              "host": ["{{LOCAL_URL}}"],
+              "path": ["api", "analytics", "visitors"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "filter", "value": "7days" }
+              ]
+            },
+            "description": "Visitors from the last 7 days."
+          }
+        },
+        {
+          "name": "Get Active Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{LOCAL_URL}}/api/analytics/active-users",
+            "description": "Returns active visitors in the last 5 minutes with platform, page, location, etc."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contact",
+      "item": [
+        {
+          "name": "Submit Contact Form",
+          "event": [
             {
-              "key": "filter",
-              "value": "",
-              "description": "Optional: today | 7days",
-              "disabled": true
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 2xx\", () => pm.response.to.be.success);",
+                  "pm.test(\"success flag is true\", () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.success).to.be.true;",
+                  "});"
+                ],
+                "type": "javascript"
+              }
             }
-          ]
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Apurv Patel\",\n  \"email\": \"apurvp3004@gmail.com\",\n  \"phone\": \"+91 97235 67600\",\n  \"subject\": \"Project Inquiry\",\n  \"message\": \"Hi Apurv, I would like to discuss a project with you.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{LOCAL_URL}}/api/contact",
+            "description": "Public endpoint — no auth required.\n\nSubmit a contact form message. Stored in MongoDB.\n\n**Rate limit:** 3 submissions per IP per 15 minutes → 429\n\n**Required fields:** name, email, subject, message (min 10 chars)\n**Optional fields:** phone"
+          }
         },
-        "description": "Paginated visitor list. Optional filter: today or 7days."
-      }
-    },
-    {
-      "name": "Get Visitors (Today)",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{LOCAL_URL}}/api/analytics/visitors?page=1&limit=10&filter=today",
-          "host": ["{{LOCAL_URL}}"],
-          "path": ["api", "analytics", "visitors"],
-          "query": [
-            {
-              "key": "page",
-              "value": "1"
+        {
+          "name": "Submit Contact Form (No Phone)",
+          "request": {
+            "auth": {
+              "type": "noauth"
             },
-            {
-              "key": "limit",
-              "value": "10"
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@example.com\",\n  \"subject\": \"General Question\",\n  \"message\": \"I have a question about your open-source projects.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            {
-              "key": "filter",
-              "value": "today"
-            }
-          ]
+            "url": "{{LOCAL_URL}}/api/contact",
+            "description": "Same as Submit Contact Form but without the optional phone field."
+          }
         },
-        "description": "Visitors from today only."
-      }
-    },
-    {
-      "name": "Get Visitors (Last 7 Days)",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{LOCAL_URL}}/api/analytics/visitors?page=1&limit=10&filter=7days",
-          "host": ["{{LOCAL_URL}}"],
-          "path": ["api", "analytics", "visitors"],
-          "query": [
-            {
-              "key": "page",
-              "value": "1"
+        {
+          "name": "Submit Contact Form (Validation Error)",
+          "request": {
+            "auth": {
+              "type": "noauth"
             },
-            {
-              "key": "limit",
-              "value": "10"
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\",\n  \"email\": \"not-an-email\",\n  \"subject\": \"\",\n  \"message\": \"short\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            {
-              "key": "filter",
-              "value": "7days"
-            }
-          ]
+            "url": "{{LOCAL_URL}}/api/contact",
+            "description": "Intentionally invalid body — expect 400 with per-field errors."
+          }
         },
-        "description": "Visitors from the last 7 days."
-      }
-    },
-    {
-      "name": "Get Active Users",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": "{{LOCAL_URL}}/api/analytics/active-users",
-        "description": "Returns active visitors in the last 5 minutes with platform, page, location, etc."
-      }
+        {
+          "name": "List All Messages (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LOCAL_URL}}/api/contact?page=1&limit=20",
+              "host": ["{{LOCAL_URL}}"],
+              "path": ["api", "contact"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Items per page (default: 20)"
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Filter by status: unread | read | replied | archived",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Admin only (JWT required). Returns paginated list of all contact messages.\n\nOptional query params:\n- `page` (default: 1)\n- `limit` (default: 20)\n- `status` — filter by unread | read | replied | archived"
+          }
+        },
+        {
+          "name": "List Unread Messages (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LOCAL_URL}}/api/contact?page=1&limit=20&status=unread",
+              "host": ["{{LOCAL_URL}}"],
+              "path": ["api", "contact"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "status", "value": "unread" }
+              ]
+            },
+            "description": "Returns only unread contact messages."
+          }
+        },
+        {
+          "name": "Get Single Message (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{LOCAL_URL}}/api/contact/{{contact_id}}",
+            "description": "Admin only. Fetch a single contact message by its MongoDB _id.\n\nSet the `contact_id` collection variable to the _id from a List response."
+          }
+        },
+        {
+          "name": "Update Status → read (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"read\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{LOCAL_URL}}/api/contact/{{contact_id}}/status",
+            "description": "Admin only. Update the status of a contact message.\n\nValid values: `unread` | `read` | `replied` | `archived`"
+          }
+        },
+        {
+          "name": "Update Status → replied (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"replied\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{LOCAL_URL}}/api/contact/{{contact_id}}/status",
+            "description": "Mark a message as replied."
+          }
+        },
+        {
+          "name": "Update Status → archived (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"archived\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{LOCAL_URL}}/api/contact/{{contact_id}}/status",
+            "description": "Archive a contact message."
+          }
+        },
+        {
+          "name": "Delete Message (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{LOCAL_URL}}/api/contact/{{contact_id}}",
+            "description": "Admin only. Permanently delete a contact message from MongoDB."
+          }
+        }
+      ]
     }
   ]
 }
